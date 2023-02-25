@@ -66,6 +66,9 @@ function Fotorama_init()
   if (!isset($conf['Fotorama']['fotoswipe_info_button'])) {
     $conf['Fotorama']['fotoswipe_info_button'] = false;
   }
+  if (!isset($conf['Fotorama']['fotoswipe_allowfullscreen'])) {
+    $conf['Fotorama']['fotoswipe_allowfullscreen'] = true;
+  }
 
   if ($user['theme'] == 'modus' and Fotorama_is_replace_picture())
   {
