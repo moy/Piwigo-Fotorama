@@ -58,6 +58,11 @@ function Fotorama_init()
     $conf['Fotorama']['info_button'] = false;
     $conf['Fotorama']['square_thumb'] = true;
   }
+  // Upgrade params from 12.b
+  if (!isset($conf['Fotorama']['mobile_backend'])) {
+    $conf['Fotorama']['mobile_backend'] = 'fotorama';
+    $conf['Fotorama']['desktop_backend'] = 'fotorama';
+  }
 
   if ($user['theme'] == 'modus' and Fotorama_is_replace_picture())
   {
@@ -82,6 +87,20 @@ function Fotorama_element_content($content)
 function Fotorama_end_picture()
 {
   global $template, $conf, $user, $page;
+
+  if ('mobile' == get_device()) {
+    $backend = $conf['Fotorama']['mobile_backend'];
+  } else {
+    $backend = $conf['Fotorama']['desktop_backend'];
+  }
+  if ($backend != 'fotorama' && $backend != 'photoswipe') {
+    die("Unknown backend '" . $backend . '".');
+  }
+  $template->assign(
+    array(
+      'backend' => $backend
+    )
+  );
 
   if (Fotorama_is_replace_picture())
   {
@@ -110,12 +129,17 @@ function Fotorama_end_picture()
 
   load_language('plugin.lang', FOTORAMA_PATH);
 
-  $split_limit = 400;
-  if ('mobile' == get_device())
-    $split_limit /= 2;
+  if ($backend == 'fotorama') {
+    $split = true;
+    $split_limit = 4000;
+    if ('mobile' == get_device())
+      $split_limit /= 2;
+  } else {
+    $split = false;
+  }
 
   $view_offset = null;
-  if (count($page['items']) >= 1.2*$split_limit)
+  if ($split && count($page['items']) >= 1.2*$split_limit)
   {
     $first = $split_limit * 0.2;
     $last = $split_limit - $first;
@@ -270,7 +294,7 @@ function Fotorama_end_picture()
   {
     $template->set_filenames( array('slideshow' => realpath(FOTORAMA_PATH.'template/fotorama.tpl')));
   }
-  $template->assign('FOTORAMA_CONTENT_PATH', realpath(FOTORAMA_PATH.'template/fotorama-content.tpl'));
+  $template->assign('FOTORAMA_CONTENT_PATH', realpath(FOTORAMA_PATH.'template/'.$backend.'-content.tpl'));
 
   // variables to log history
   $template->assign(
