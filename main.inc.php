@@ -63,6 +63,9 @@ function Fotorama_init()
     $conf['Fotorama']['mobile_backend'] = 'fotorama';
     $conf['Fotorama']['desktop_backend'] = 'fotorama';
   }
+  if (!isset($conf['Fotorama']['fotoswipe_info_button'])) {
+    $conf['Fotorama']['fotoswipe_info_button'] = false;
+  }
 
   if ($user['theme'] == 'modus' and Fotorama_is_replace_picture())
   {
